@@ -23,6 +23,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -215,7 +216,7 @@ void USART2_IRQHandler(void)
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
-
+	UsartReceiveIDLE(&huart2);
   /* USER CODE END USART2_IRQn 1 */
 }
 
@@ -234,6 +235,28 @@ void EXTI15_10_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+ProtoCmd rx_cmd;
+void UsartReceiveIDLE(UART_HandleTypeDef *huart)
+{
+  if(__HAL_UART_GET_FLAG(&huart2, UART_FLAG_IDLE) != RESET)
+  {
+    __HAL_UART_CLEAR_IDLEFLAG(&huart2);
+    __HAL_DMA_DISABLE(&hdma_usart2_rx);
+    HAL_UART_DMAStop(&huart2);
+
+    len_data_total =  __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+		
+		
+		rx_cmd.len = RX_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart2_rx);
+		if(rx_cmd.len != RX_SIZE)
+		{
+			memcpy(rx_cmd.data, rx_buffer , rx_cmd.len);
+			xQueueSendFromISR(cmdQueue, (void*)&rx_cmd,  (TickType_t) 0);
+		}
+    __HAL_DMA_ENABLE(&hdma_usart2_rx);
+		HAL_UART_Receive_DMA(&huart2, rx_buffer, RX_SIZE);	
+  }
+}
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

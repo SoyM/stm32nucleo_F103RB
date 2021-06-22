@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,9 +46,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+ProtoCmd curr_cmd;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
+osMessageQId cmdQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -97,6 +98,11 @@ void MX_FREERTOS_Init(void) {
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* definition and creation of cmdQueue */
+  osMessageQDef(cmdQueue, 16, uint16_t);
+  cmdQueueHandle = osMessageCreate(osMessageQ(cmdQueue), NULL);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -123,10 +129,19 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+	
   for(;;)
   {
+    if(cmdQueue != 0)
+    {
+      if( xQueueReceive(cmdQueue, (void *)&curr_cmd, ( TickType_t )500))
+      {
+         HAL_UART_Transmit_DMA(&huart2, (void *)curr_cmd.data, curr_cmd.len); 
+      }
+    }		
+		
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-    osDelay(500);
+    //osDelay(500);
   }
   /* USER CODE END StartDefaultTask */
 }

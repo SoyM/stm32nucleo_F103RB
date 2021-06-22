@@ -53,7 +53,7 @@ void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-	HAL_UART_Receive_IT(&huart2, (uint8_t *)&aRxBuffer, 1);
+	//HAL_UART_Receive_IT(&huart2, (uint8_t *)&aRxBuffer, 1);
   /* USER CODE END USART2_Init 2 */
 
 }
@@ -154,13 +154,14 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 /* USER CODE BEGIN 1 */
 
 
-
+/*
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&aRxBuffer, 1);
 	HAL_UART_Transmit(&huart2, (uint8_t *)&aRxBuffer, 1 ,10);
 }
+*/
 
 /* USER CODE END 1 */
 

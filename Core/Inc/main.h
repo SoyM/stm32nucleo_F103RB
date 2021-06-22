@@ -32,7 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "cmsis_os.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -54,7 +54,11 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+typedef struct 
+{
+	uint8_t len;
+	uint8_t data[255];
+} ProtoCmd;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -74,7 +78,12 @@ void Error_Handler(void);
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
+//#define RX_SIZE sizeof(struct ProtoCmd * ) 
+#define RX_SIZE 255
 
+extern uint8_t rx_buffer[RX_SIZE];
+extern uint16_t len_data_total;
+extern QueueHandle_t cmdQueue; 
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

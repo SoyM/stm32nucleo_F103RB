@@ -46,7 +46,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+uint8_t rx_buffer[RX_SIZE];
+uint16_t len_data_total;
+QueueHandle_t cmdQueue; 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,7 +94,8 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+	cmdQueue = xQueueCreate(5, RX_SIZE);
+	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -103,6 +106,7 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	HAL_UART_Receive_DMA(&huart2, rx_buffer, RX_SIZE);
   while (1)
   {
     /* USER CODE END WHILE */

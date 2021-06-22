@@ -59,7 +59,7 @@ void TIM1_UP_IRQHandler(void);
 void USART2_IRQHandler(void);
 void EXTI15_10_IRQHandler(void);
 /* USER CODE BEGIN EFP */
-
+void UsartReceiveIDLE(UART_HandleTypeDef *huart);
 /* USER CODE END EFP */
 
 #ifdef __cplusplus
