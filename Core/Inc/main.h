@@ -84,6 +84,7 @@ typedef struct
 extern uint8_t rx_buffer[RX_SIZE];
 extern uint16_t len_data_total;
 extern QueueHandle_t cmdQueue; 
+extern uint32_t adc_value[10];
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
