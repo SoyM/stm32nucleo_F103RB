@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "usart.h"
+#include "flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -129,6 +130,7 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+	uint32_t sum_adc;
 	
   for(;;)
   {
@@ -136,9 +138,41 @@ void StartDefaultTask(void const * argument)
     {
       if( xQueueReceive(cmdQueue, (void *)&curr_cmd, ( TickType_t )500))
       {
+				if(curr_cmd.data[0]== 0x81 
+					|| curr_cmd.data[0]== 0x82 
+					|| curr_cmd.data[0]== 0x83 
+					|| curr_cmd.data[0]== 0x84
+					|| curr_cmd.data[0]== 0xFF)
+				{
+					if(curr_cmd.data[2] == 0x00 && curr_cmd.data[3] == 0x23)
+					{
+						int16_t upgradeFlag;
+
+						upgradeFlag = 0x0002;
+						FlashWriteDate(UPGRADE_ADDRESS, &upgradeFlag, 1);
+						__disable_irq();
+						NVIC_SystemReset();					
+					}
+				}
          HAL_UART_Transmit_DMA(&huart2, (void *)curr_cmd.data, curr_cmd.len); 
       }
     }		
+		
+		sum_adc = 0;
+		for(uint8_t i=0; i<5; i++)
+		{
+			sum_adc = sum_adc + adc_value[i*2];
+		}
+		average_adc = sum_adc / 5;
+		average_volt_a2 = average_adc * (3.363 / 4032);
+		
+		sum_adc = 0;
+		for(uint8_t i=0; i<5; i++)
+		{
+			sum_adc = sum_adc + adc_value[i*2+1];
+		}
+		average_adc = sum_adc / 5;		
+		average_volt_a3 = average_adc * (3.363 / 4032);
 		
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     //osDelay(500);

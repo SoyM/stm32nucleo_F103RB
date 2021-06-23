@@ -51,6 +51,9 @@ uint8_t rx_buffer[RX_SIZE];
 uint16_t len_data_total;
 QueueHandle_t cmdQueue; 
 uint32_t adc_value[10];
+uint16_t average_adc;
+float average_volt_a2;
+float average_volt_a3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
