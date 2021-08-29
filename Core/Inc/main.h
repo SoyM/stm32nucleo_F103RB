@@ -58,7 +58,7 @@ typedef struct
 {
 	uint8_t len;
 	uint8_t data[255];
-} ProtoCmd;
+} ProtoCmd_t;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -78,12 +78,12 @@ typedef struct
 #define SWO_Pin GPIO_PIN_3
 #define SWO_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-//#define RX_SIZE sizeof(struct ProtoCmd * ) 
+//#define RX_SIZE sizeof(struct ProtoCmd_t * ) 
 #define RX_SIZE 255
 
+extern osMessageQId cmdQueueHandle;
 extern uint8_t rx_buffer[RX_SIZE];
 extern uint16_t len_data_total;
-extern QueueHandle_t cmdQueue; 
 extern uint32_t adc_value[10];
 extern uint16_t average_adc;
 extern float average_volt_a2;

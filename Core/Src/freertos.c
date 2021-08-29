@@ -47,7 +47,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-ProtoCmd curr_cmd;
+ProtoCmd_t curr_cmd;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osMessageQId cmdQueueHandle;
@@ -101,7 +101,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* definition and creation of cmdQueue */
-  osMessageQDef(cmdQueue, 16, uint16_t);
+  osMessageQDef(cmdQueue, 4, ProtoCmd_t);
   cmdQueueHandle = osMessageCreate(osMessageQ(cmdQueue), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -134,9 +134,9 @@ void StartDefaultTask(void const * argument)
 	
   for(;;)
   {
-    if(cmdQueue != 0)
+    if(cmdQueueHandle != 0)
     {
-      if( xQueueReceive(cmdQueue, (void *)&curr_cmd, ( TickType_t )500))
+      if(xQueueReceive(cmdQueueHandle, (void *)&curr_cmd, ( TickType_t )500))
       {
 				if(curr_cmd.data[0]== 0x81 
 					|| curr_cmd.data[0]== 0x82 
@@ -175,7 +175,7 @@ void StartDefaultTask(void const * argument)
 		average_volt_a3 = average_adc * (3.363 / 4032);
 		
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-    //osDelay(500);
+    osDelay(500);
   }
   /* USER CODE END StartDefaultTask */
 }

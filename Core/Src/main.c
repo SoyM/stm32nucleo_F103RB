@@ -49,7 +49,6 @@
 /* USER CODE BEGIN PV */
 uint8_t rx_buffer[RX_SIZE];
 uint16_t len_data_total;
-QueueHandle_t cmdQueue; 
 uint32_t adc_value[10];
 uint16_t average_adc;
 float average_volt_a2;
@@ -100,7 +99,6 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-	cmdQueue = xQueueCreate(5, RX_SIZE);
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc_value , 10);
@@ -173,7 +171,7 @@ void SystemClock_Config(void)
 
 /* USER CODE END 4 */
 
- /**
+/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM1 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
