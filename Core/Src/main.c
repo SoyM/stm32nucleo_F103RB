@@ -102,6 +102,7 @@ int main(void)
 	__HAL_UART_ENABLE_IT(&huart2, UART_IT_IDLE);
 	
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc_value , 10);
+	HAL_UART_Receive_DMA(&huart2, rx_buffer, RX_SIZE);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */
@@ -112,7 +113,6 @@ int main(void)
   /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	HAL_UART_Receive_DMA(&huart2, rx_buffer, RX_SIZE);
   while (1)
   {
     /* USER CODE END WHILE */
