@@ -50,6 +50,7 @@
 ProtoCmd_t curr_cmd;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
+osThreadId nonblockTaskHandle;
 osMessageQId cmdQueueHandle;
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +59,7 @@ osMessageQId cmdQueueHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
+void StartTaskNonblock(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -113,6 +115,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of nonblockTask */
+  osThreadDef(nonblockTask, StartTaskNonblock, osPriorityBelowNormal, 0, 128);
+  nonblockTaskHandle = osThreadCreate(osThread(nonblockTask), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -130,7 +136,7 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-	uint32_t sum_adc;
+	
 	
   for(;;)
   {
@@ -158,7 +164,26 @@ void StartDefaultTask(void const * argument)
       }
     }		
 		
-		sum_adc = 0;
+
+  }
+  /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_StartTaskNonblock */
+/**
+* @brief Function implementing the nonblockTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTaskNonblock */
+void StartTaskNonblock(void const * argument)
+{
+  /* USER CODE BEGIN StartTaskNonblock */
+	uint32_t sum_adc;
+  /* Infinite loop */
+  for(;;)
+  {
+    sum_adc = 0;
 		for(uint8_t i=0; i<5; i++)
 		{
 			sum_adc = sum_adc + adc_value[i*2];
@@ -177,7 +202,7 @@ void StartDefaultTask(void const * argument)
 		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
     osDelay(500);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartTaskNonblock */
 }
 
 /* Private application code --------------------------------------------------*/
