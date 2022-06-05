@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package people;
+
+message Person {
+    string name = 1;
+    int32 id = 2;
+    enum Gender {     //定义枚举类型，每个枚举定义必须包含一个映射到0的常量作为它的第一个元素
+        FEMALE = 0;
+        MALE = 1;
+    }
+    Gender gender = 3;
+
+    enum PhoneType {    //定义枚举类型，每个枚举定义必须包含一个映射到0的常量作为它的第一个元素
+        MOBILE = 0;
+        HOME = 1;
+        WORK = 2;
+    }
+
+    message PhoneNumber {     //定义嵌套消息类型
+        string number = 1;
+        PhoneType type = 2;
+    }
+    repeated PhoneNumber phones = 4;      //动态数组，构成元素的数据类型是上面定义的PhoneNumber
+}
